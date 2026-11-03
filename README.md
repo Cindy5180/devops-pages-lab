@@ -15,3 +15,5 @@ DevOps course lab — a GitHub Pages site whose homepage is this README, with an
 9. 📝 Committed to main in [Cindy5180/activity-log-ci-lab](https://github.com/Cindy5180/activity-log-ci-lab/commit/a7051d0fde8a28acb36d066cb8c46140a758313e)
 10. 📝 Committed to main in [Cindy5180/activity-log-ci-lab](https://github.com/Cindy5180/activity-log-ci-lab/commit/1a18409c1872d8b4893c1629bdbcb1c5da5b87cf)
 <!--END_SECTION:activity-->
+
+See the [project docs](docs/missing.html).
