@@ -1,0 +1,60 @@
+name: Gated deploy to GitHub Pages
+
+# build -> validate (gate) -> deploy. Deploy runs ONLY if validate passes.
+on:
+  push:
+    branches: [main]        # the activity-log bot's PAT commit triggers this too
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Keep built site for validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-site
+          path: _site
+          retention-days: 3
+
+  validate:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: built-site
+          path: _site
+      - name: Validate README markers, homepage and links
+        run: python3 scripts/validate_site.py --readme README.md --site _site --baseurl "/${GITHUB_REPOSITORY#*/}"
+      - name: Package site for Pages (only reached if validation passed)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: validate         # <- the gate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
