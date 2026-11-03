@@ -1,0 +1,7 @@
+title: DevOps Pages Lab
+theme: jekyll-theme-minimal
+# Keep scripts/docs out of the published site
+exclude:
+  - scripts
+  - .github
+  - GUIDE.md
